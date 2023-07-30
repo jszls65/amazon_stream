@@ -1,9 +1,9 @@
 // @Title
 // @Author  zls  2023/7/28 22:18
-package main
+package common
 
 // ShopIndex36 美亚36
-const ShopIndex36 int = 36
+const ShopIndex36 string = "美亚三十六店"
 
 var dataSetSlice = []string{"sp-traffic", "sp-conversion", "budget-usage", "sd-traffic", "sd-conversion"}
 

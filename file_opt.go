@@ -3,6 +3,7 @@
 package main
 
 import (
+	"amazon_stream/common"
 	"bufio"
 	"errors"
 	"io"
@@ -21,10 +22,10 @@ func writeStr2File4AccessToken(token string) error {
 	if err != nil {
 		return err
 	}
-	defer CloseFile(file)
+	defer common.CloseFile(file)
 
 	// 获取当前时间
-	timeStr := time.Now().Format(TimeTemplate)
+	timeStr := time.Now().Format(common.TimeTemplate)
 
 	// 开始写入文件
 	_, err = file.WriteString("time:" + timeStr)
@@ -45,7 +46,7 @@ func getTokenFromFile() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer CloseFile(file)
+	defer common.CloseFile(file)
 
 	var token string
 	var timeStr string
@@ -67,7 +68,7 @@ func getTokenFromFile() (string, error) {
 		return "", nil
 	}
 	// 如果时间超过1小时, 也返回""
-	oldTime, err := time.Parse(TimeTemplate, timeStr)
+	oldTime, err := time.Parse(common.TimeTemplate, timeStr)
 	if err != nil {
 		return "", err
 	}

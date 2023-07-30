@@ -1,15 +1,18 @@
 // @Title
 // @Author  zls  2023/7/28 21:58
-package main
+package common
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/google/uuid"
+	"github.com/stretchr/objx"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 // 处理异常
@@ -47,4 +50,22 @@ func CloseFile(file *os.File) {
 	if err != nil {
 		log.Fatalln("关闭文件失败", err.Error())
 	}
+}
+
+func GetRandomToken(maxLen int) string {
+	uuidStr := uuid.New().String()
+	uuidStr = strings.ReplaceAll(uuidStr, "-", "")
+	if len(uuidStr) > maxLen {
+		return uuidStr[:maxLen]
+	}
+	return uuidStr
+
+}
+
+func JsonToMap(jsonStr string) (objx.Map, error) {
+	fromJSON, err := objx.FromJSON(jsonStr)
+	if err != nil {
+		return nil, err
+	}
+	return fromJSON, nil
 }
