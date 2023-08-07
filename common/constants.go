@@ -3,7 +3,8 @@
 package common
 
 // ShopIndex36 美亚36
-const ShopIndex36 string = "美亚三十六店"
+const ShopIndex36 string = "美亚三十六"
+const ShopIndex01 string = "美亚一"
 
 var dataSetSlice = []string{"sp-traffic", "sp-conversion", "budget-usage", "sd-traffic", "sd-conversion"}
 

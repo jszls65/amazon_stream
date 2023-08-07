@@ -69,3 +69,13 @@ func JsonToMap(jsonStr string) (objx.Map, error) {
 	}
 	return fromJSON, nil
 }
+
+// 结构体转json字符串
+func ToJsonStr(st interface{}) string {
+	marshal, err := json.Marshal(st)
+	if err != nil {
+		log.Fatalln("结构体转json字符串 异常,", err)
+	}
+	return string(marshal)
+
+}
