@@ -4,6 +4,7 @@ package main
 
 import (
 	"amazon_stream/datasource"
+
 	"gorm.io/gen"
 )
 
@@ -13,7 +14,7 @@ type Querier interface {
 	FilterWithNameAndRole(name, role string) ([]gen.T, error)
 }
 
-func main() {
+func main21() {
 	g := gen.NewGenerator(gen.Config{
 		OutPath: "./models",
 		Mode:    gen.WithoutContext | gen.WithDefaultQuery | gen.WithQueryInterface, // generate mode
@@ -23,7 +24,7 @@ func main() {
 	g.UseDB(gormdb) // reuse your gorm db
 
 	// Generate basic type-safe DAO API for struct `model.User` following conventions
-	g.GenerateModelAs("t_amz_stream_subscribe", "AmzStreamSubscribe")
+	g.GenerateModelAs("t_amz_adv_rule_hourly", "AmzAdvRuleHourly")
 
 	// Generate the code
 	// 单独执行命令: go run gormgen.go

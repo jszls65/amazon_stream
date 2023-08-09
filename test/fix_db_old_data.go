@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func main() {
+func main22() {
 	db := datasource.GetDB()
 	var hourlies []model.AmzAdvRuleHourly
 	db.Raw("select * from t_amz_adv_rule_hourly where beijing_start_hour is not null").Scan(&hourlies)

@@ -4,13 +4,13 @@ package subfunc
 
 import (
 	"amazon_stream/common"
-	"log"
+	"fmt"
 	"net/http"
 	"strconv"
 )
 
 // ListSub 查询店铺的所有订阅
-func ListSub(shopName string, accessToken string) {
+func ListSub(shopName string, accessToken string) map[string]interface{} {
 	shopData := common.GetShopDataMap(shopName)
 	httpUrl := "https://advertising-api.amazon.com/streams/subscriptions?maxResults=10"
 	req, err := http.NewRequest("GET", httpUrl, nil)
@@ -22,17 +22,15 @@ func ListSub(shopName string, accessToken string) {
 	resp, err := http.DefaultClient.Do(req)
 	common.HandleError(err)
 	bodyJsonStr := common.GetRespBodyStr(resp.Body)
-	//log.Println(bodyJsonStr)
+	fmt.Println(bodyJsonStr)
 	//校验数据集订阅状态
-	checkDataSetState(bodyJsonStr)
+	return checkDataSetState(bodyJsonStr)
 }
 
 // 校验数据集订阅状态
-func checkDataSetState(bodyJsonStr string) {
+func checkDataSetState(bodyJsonStr string) map[string]interface{} {
 	bodyMap, err := common.JsonToMap(bodyJsonStr)
-	if err != nil {
-		log.Fatalln("")
-	}
+	common.HandleError(err)
 	dataSetSlice := common.GetDataSetSlice()
 	// 定义结果map
 	resultSubItemMap := make(map[string]string)
@@ -41,12 +39,7 @@ func checkDataSetState(bodyJsonStr string) {
 	}
 	itemSlice := bodyMap.Get("subscriptions").InterSlice()
 	itemLen := len(itemSlice)
-	if itemSlice == nil || itemLen == 0 {
-		for k, v := range resultSubItemMap {
-			log.Println(k, ":", v)
-		}
-		return
-	}
+
 	for i := 0; i < itemLen; i++ {
 		objxMap := bodyMap.Get("subscriptions[" + strconv.Itoa(i) + "]").MustObjxMap()
 		dataSetId := objxMap.Get("dataSetId").String()
@@ -57,9 +50,13 @@ func checkDataSetState(bodyJsonStr string) {
 		status := objxMap.Get("status").String()
 		resultSubItemMap[dataSetId] = status
 	}
+	// 返回值
+	dataSetMap := make(map[string]interface{}, 0)
 	// 遍历item
-	for k, v := range resultSubItemMap {
-		log.Println(k, ":", v)
+	for i, val := range dataSetSlice {
+		v := resultSubItemMap[val]
+		fmt.Println(i, " ", val, ":", v)
+		dataSetMap[val] = v
 	}
-
+	return dataSetMap
 }

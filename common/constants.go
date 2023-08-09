@@ -2,11 +2,18 @@
 // @Author  zls  2023/7/28 22:18
 package common
 
-// ShopIndex36 美亚36
-const ShopIndex36 string = "美亚三十六"
-const ShopIndex01 string = "美亚一"
-
-var dataSetSlice = []string{"sp-traffic", "sp-conversion", "budget-usage", "sd-traffic", "sd-conversion"}
+var dataSetSlice = []string{
+	"sp-traffic",
+	"sp-conversion",
+	"budget-usage",
+	"sd-traffic",
+	"sd-conversion",
+	"campaigns",
+	"adgroups",
+	"ads",
+	"targets",
+	"sponsored-ads-campaign-diagnostics-recommendations",
+}
 
 func GetDataSetSlice() []string {
 	return dataSetSlice

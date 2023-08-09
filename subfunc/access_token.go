@@ -7,7 +7,6 @@ import (
 	"amazon_stream/pojo"
 	"encoding/json"
 	"io"
-	"log"
 	"net/http"
 )
 
@@ -25,7 +24,7 @@ func GenAccessToken(shopName string) string {
 
 	body, err := io.ReadAll(resp.Body) // 读取响应 body, 返回为 []byte
 	common.HandleError(err)
-	log.Println("请求成功, body:", string(body))
+	//log.Println("请求成功, body:", string(body))
 
 	// 将json字符串映射到结构体中
 	var rsp pojo.AccessTokenResp
