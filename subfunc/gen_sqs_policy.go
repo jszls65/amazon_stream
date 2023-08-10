@@ -1,6 +1,6 @@
 // @Title
 // @Author  zls  2023/8/8 14:07
-package main
+package subfunc
 
 import (
 	"amazon_stream/common"
@@ -11,12 +11,24 @@ import (
 	"time"
 )
 
-var queue = "***" // sqs arn
-var queueRootArn = "***"
-var topic = "***" // topic arn
+var queue string // sqs arn
+var queueRootArn string
+var topic string // topic arn
 
 // GenSqsPolicy 生成sqs的访问策略
-func GenSqsPolicy() {
+func GenSqsPolicy(shopName string) map[string]interface{} {
+	shopData := common.GetShopDataMap(shopName)
+	if shopData.SqsArn == "" || shopData.IamRoot == "" || shopData.TopicArn == "" {
+		return objx.Map{
+			"错误":       "表中缺少数据",
+			"SqsArn":   shopData.SqsArn,
+			"IamRoot":  shopData.IamRoot,
+			"TopicArn": shopData.TopicArn,
+		}
+	}
+	queue = shopData.SqsArn
+	queueRootArn = shopData.IamRoot
+	topic = shopData.TopicArn
 
 	mapList := make([]objx.Map, 0)
 	// queueRoot
@@ -61,6 +73,12 @@ func GenSqsPolicy() {
 	fmt.Println("角色访问策略")
 	fmt.Println(rolePolicy)
 
+	// 返回值
+	resultMap := objx.Map{
+		"sqsPolicy":  mainMap,
+		"rolePolicy": objx.MustFromJSON(rolePolicy),
+	}
+	return resultMap
 }
 
 // 替换内容
@@ -280,7 +298,7 @@ var amazonOpt = `{
       "Resource": "{queue}"
     }`
 
-var rolePolicy = `{
+var rolePolicy = `{"list":[{
     "Effect": "Allow",
     "Action": "sns:Publish",
     "Resource": "{topic}"
@@ -294,4 +312,4 @@ var rolePolicy = `{
     "Resource": [
         "{queue}"
     ]
-}`
+}]}`

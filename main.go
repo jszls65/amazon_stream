@@ -5,48 +5,77 @@ package main
 import (
 	"amazon_stream/common"
 	"amazon_stream/subfunc"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 var accessToken string
-var pathRoot = "subscribe/"
 
 func main() {
 	r := gin.Default()
 	// 查询订阅信息
-	r.GET(pathRoot+"/getSubscribeInfo", func(c *gin.Context) {
-		shopIndex := c.Query("shopIndex")
-
-		subInfo := getSubscribeResults(common.GetShopName(shopIndex))
+	r.GET("subscribe/getInfo", func(c *gin.Context) {
+		shopName := c.Query("shopName")
+		if shopName == "" {
+			c.JSON(400, gin.H{
+				"data": "参数异常",
+			})
+			return
+		}
+		subInfo := getSubscribeResults(shopName)
 		c.JSON(200, gin.H{
 			"data": subInfo,
 		})
 	})
 	// 创建订阅信息
-	r.GET(pathRoot+"/create", func(c *gin.Context) {
-		shopIndex := c.Query("shopIndex")
-
-		subInfo := getSubscribeResults(common.GetShopName(shopIndex))
+	r.GET("subscribe/create", func(c *gin.Context) {
+		shopName := c.Query("shopName")
+		dataSetId := c.Query("dataSetId") // sd-traffic"
+		// 参数校验
+		if shopName == "" || dataSetId == "" {
+			c.JSON(400, gin.H{
+				"data": "参数异常",
+			})
+			return
+		}
+		// 创建订阅
+		response := create(shopName, dataSetId)
 		c.JSON(200, gin.H{
-			"data": subInfo,
+			"msg":  "执行成功",
+			"data": response,
 		})
 	})
-	r.Run(":8082")
+
+	// 生成配置
+	r.GET("subscribe/genPolicy", func(c *gin.Context) {
+		shopName := c.Query("shopName")
+		// 参数校验
+		if shopName == "" {
+			c.JSON(400, gin.H{
+				"data": "参数异常",
+			})
+			return
+		}
+		policy := subfunc.GenSqsPolicy(shopName)
+		c.JSON(200, gin.H{
+			"msg":  "执行成功",
+			"data": policy,
+		})
+	})
+	err := r.Run(":8082")
+	common.HandleError(err)
 }
 
 // 创建订阅
-func subscribe(shopName string, index int) {
+func create(shopName string, dataSetId string) *http.Response {
 	if accessToken == "" {
 		accessToken = subfunc.GenAccessToken(shopName)
 	}
-	dataSetSlice := common.GetDataSetSlice()
-	accessToken := subfunc.GenAccessToken(shopName)
-	subfunc.CreateSub(shopName, accessToken, dataSetSlice[index])
+	return subfunc.CreateSub(shopName, accessToken, dataSetId)
 }
 
 // 查询订阅结果
-func getSubscribeResults(shopName string) map[string]interface{} {
+func getSubscribeResults(shopName string) []string {
 	if accessToken == "" {
 		accessToken = subfunc.GenAccessToken(shopName)
 	}

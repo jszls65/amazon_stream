@@ -4,15 +4,17 @@ package subfunc
 
 import (
 	"amazon_stream/common"
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
 )
 
 // ListSub 查询店铺的所有订阅
-func ListSub(shopName string, accessToken string) map[string]interface{} {
+func ListSub(shopName string, accessToken string) []string {
 	shopData := common.GetShopDataMap(shopName)
-	httpUrl := "https://advertising-api.amazon.com/streams/subscriptions?maxResults=10"
+	httpUrl := "https://advertising-api.amazon.com/streams/subscriptions?maxResults=30"
 	req, err := http.NewRequest("GET", httpUrl, nil)
 	common.HandleError(err)
 	req.Header.Add("Content-Type", "application/vnd.MarketingStreamSubscriptions.StreamSubscriptionResource.v1.0+json")
@@ -22,20 +24,22 @@ func ListSub(shopName string, accessToken string) map[string]interface{} {
 	resp, err := http.DefaultClient.Do(req)
 	common.HandleError(err)
 	bodyJsonStr := common.GetRespBodyStr(resp.Body)
-	fmt.Println(bodyJsonStr)
+	var str bytes.Buffer
+	_ = json.Indent(&str, []byte(bodyJsonStr), "", "    ")
+	fmt.Println(str.String())
 	//校验数据集订阅状态
-	return checkDataSetState(bodyJsonStr)
+	return checkDataSetState(bodyJsonStr, shopData.SqsArn)
 }
 
 // 校验数据集订阅状态
-func checkDataSetState(bodyJsonStr string) map[string]interface{} {
+func checkDataSetState(bodyJsonStr string, sqsArn string) []string {
 	bodyMap, err := common.JsonToMap(bodyJsonStr)
 	common.HandleError(err)
 	dataSetSlice := common.GetDataSetSlice()
 	// 定义结果map
 	resultSubItemMap := make(map[string]string)
-	for _, val := range dataSetSlice {
-		resultSubItemMap[val] = "--"
+	for _, dataSetId := range dataSetSlice {
+		resultSubItemMap[dataSetId] = "--"
 	}
 	itemSlice := bodyMap.Get("subscriptions").InterSlice()
 	itemLen := len(itemSlice)
@@ -43,6 +47,10 @@ func checkDataSetState(bodyJsonStr string) map[string]interface{} {
 	for i := 0; i < itemLen; i++ {
 		objxMap := bodyMap.Get("subscriptions[" + strconv.Itoa(i) + "]").MustObjxMap()
 		dataSetId := objxMap.Get("dataSetId").String()
+		destinationArn := objxMap.Get("destinationArn").String()
+		if sqsArn != destinationArn {
+			continue
+		}
 
 		if status, isE := resultSubItemMap[dataSetId]; isE && status == "ACTIVE" {
 			continue
@@ -50,13 +58,13 @@ func checkDataSetState(bodyJsonStr string) map[string]interface{} {
 		status := objxMap.Get("status").String()
 		resultSubItemMap[dataSetId] = status
 	}
-	// 返回值
-	dataSetMap := make(map[string]interface{}, 0)
-	// 遍历item
+
+	resultList := []string{}
 	for i, val := range dataSetSlice {
 		v := resultSubItemMap[val]
 		fmt.Println(i, " ", val, ":", v)
-		dataSetMap[val] = v
+		itemStr := strconv.Itoa(i) + " " + val + ":" + v
+		resultList = append(resultList, itemStr)
 	}
-	return dataSetMap
+	return resultList
 }
