@@ -19,3 +19,7 @@ CREATE TABLE `t_amz_stream_subscribe` (
   PRIMARY KEY (`id`),
   KEY `idx_shopname` (`shop_name`)
 ) COMMENT='amazon marketing stream流订阅信息';
+
+-- 2023-08-11 添加主题和iam root arn by zls
+alter table t_amz_stream_subscribe add column `topic_arn` varchar(100) null comment '主题arn' after sqs_arn;
+alter table t_amz_stream_subscribe add column `iam_root` varchar(100) null comment 'aws账号iam root' after sqs_arn;
