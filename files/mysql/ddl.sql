@@ -23,3 +23,7 @@ CREATE TABLE `t_amz_stream_subscribe` (
 -- 2023-08-11 添加主题和iam root arn by zls
 alter table t_amz_stream_subscribe add column `topic_arn` varchar(100) null comment '主题arn' after sqs_arn;
 alter table t_amz_stream_subscribe add column `iam_root` varchar(100) null comment 'aws账号iam root' after sqs_arn;
+
+-- 2023-08-14 添加 destinations 的id和name by zls
+alter table t_amz_stream_subscribe add column `destinationId` varchar(100) null comment 'sqs的destination的id, 亚马逊返回' after refresh_token;
+alter table t_amz_stream_subscribe add column `destinationName` varchar(100) null comment 'sqs的destination的name, 开发者定义' after destinationId;
