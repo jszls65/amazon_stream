@@ -12,7 +12,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
+	"time"
 )
 
 // 处理异常
@@ -78,4 +80,8 @@ func ToJsonStr(st interface{}) string {
 	}
 	return string(marshal)
 
+}
+
+func GetId(pre string) string {
+	return pre + strconv.Itoa(int(time.Now().Unix()))
 }
