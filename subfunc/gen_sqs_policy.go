@@ -7,7 +7,6 @@ import (
 	"github.com/stretchr/objx"
 	"strconv"
 	"strings"
-	"time"
 )
 
 var queue string // sqs arn
@@ -89,15 +88,11 @@ func GenSqsPolicy(shopName string) map[string]interface{} {
 
 // 替换内容
 func replaceCon(str string) objx.Map {
-	str = strings.ReplaceAll(str, "{id}", getId("Item"))
+	str = strings.ReplaceAll(str, "{id}", common.GetId("Item"))
 	str = strings.ReplaceAll(str, "{queue}", queue)
 	str = strings.ReplaceAll(str, "{topic}", topic)
 	str = strings.ReplaceAll(str, "{queue-root}", queueRootArn)
 	return objx.MustFromJSON(str)
-}
-
-func getId(pre string) string {
-	return pre + "-" + strconv.Itoa(int(time.Now().Unix()))
 }
 
 var mainStr = `{
@@ -291,6 +286,7 @@ var sns = ` {
       }
     }`
 
+// 亚马逊对sqs的操作
 var amazonOpt = `{
       "Sid": "{id}",
       "Effect": "Allow",
@@ -302,6 +298,22 @@ var amazonOpt = `{
         "sqs:SendMessage"
       ],
       "Resource": "{queue}"
+    }`
+
+// 订单小时级别数据
+var orderOpt = `{
+      "Sid": "{id}",
+      "Action": [
+        "sqs:GetQueueAttributes",
+        "sqs:SendMessage"
+      ],
+      "Effect": "Allow",
+      "Resource": "{queue}",
+      "Principal": {
+        "AWS": [
+          "437568002678"
+        ]
+      }
     }`
 
 var rolePolicy = `{"list":[{
