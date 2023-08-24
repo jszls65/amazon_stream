@@ -27,3 +27,28 @@ alter table t_amz_stream_subscribe add column `iam_root` varchar(100) null comme
 -- 2023-08-14 添加 destinations 的id和name by zls
 alter table t_amz_stream_subscribe add column `destinationId` varchar(100) null comment 'sqs的destination的id, 亚马逊返回' after refresh_token;
 alter table t_amz_stream_subscribe add column `destinationName` varchar(100) null comment 'sqs的destination的name, 开发者定义' after destinationId;
+
+
+
+-- 订单小时级别数据表 by zls @ 2023-08-24
+drop table if exists `t_ams_sales_event`;
+create table t_ams_sales_event(
+                                  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+                                  `account_id` varchar(50) not null comment '账号id',
+                                  `marketplace_id` varchar(15) null comment '地区',
+                                  `asin` varchar(15) null comment 'asin',
+                                  `ordered_units` int null comment '订购数量',
+                                  `ordered_revenue` decimal(12,2) null comment '销售额',
+                                  `start_time` datetime null comment '开始时间',
+                                  `end_time` datetime null comment '结束时间',
+                                  `currency_code` varchar(10) null comment '货币',
+                                  `event_time` datetime not null comment '事件时间',
+                                  `publish_time` datetime null comment '推送时间',
+                                  `origin_msg` text null comment 'sqs原始消息',
+                                  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                  PRIMARY KEY (`id`),
+                                  UNIQUE KEY `idx_asin_marketplaceid` (`asin`, `marketplace_id`, `start_time`)
+)comment '订单小时数据#ITEM_SALES_EVENT_CHANGE';
+alter table `t_ams_sales_event` add column `seller_id` varchar(30) null comment '店铺id' after account_id;
+alter table `t_ams_sales_event` add column `start_hour` int null comment '开始时间的小时' after end_time;

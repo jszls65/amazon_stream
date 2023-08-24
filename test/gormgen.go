@@ -24,7 +24,7 @@ func main() {
 	g.UseDB(gormdb) // reuse your gorm db
 
 	// Generate basic type-safe DAO API for struct `model.User` following conventions
-	g.GenerateModelAs("t_amz_stream_subscribe", "AmzStreamSubscribe")
+	g.GenerateModelAs("t_ams_sales_event", "AmsSalesEvent")
 
 	// Generate the code
 	// 单独执行命令: go run gormgen.go
