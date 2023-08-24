@@ -1,4 +1,7 @@
 # Amazon Marketing Stream API 订阅
+> 广告小时级别数据订阅
+> 
+> 订单小时级别数据订阅 
 
 ## 介绍
 Amazon Marketing Stream 是亚马逊广告业务的信息流.
@@ -27,12 +30,15 @@ Amazon Marketing Stream 是亚马逊广告业务的信息流.
 ![状态](https://d3a0d0y2hgofx6.cloudfront.net/en-us/_images/amazon-marketing-stream/state-diagram.png)
 
 ## 说明
-目前支持的订阅数据集:
+广告: 目前支持的订阅数据集:
 1. 商品推广流量（sp-traffic）
 2. 商品推广转化 (sp-conversion)
 3. 赞助广告预算使用 (budget-usage)
 4. 展示流量（sd-traffic）
 5. 展示转化（sd-conversion）
+
+订单: 目前支持的类型: 
+1. 订单项时间变化数据(ITEM_SALES_EVENT_CHANGE)
 
 ## Q&A
 一、关于如何订阅, 请参考官网文档：
