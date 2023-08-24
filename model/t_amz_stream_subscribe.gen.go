@@ -19,6 +19,7 @@ type AmzStreamSubscribe struct {
 	MarketplaceID   string    `gorm:"column:marketplace_id;not null;comment:市场id" json:"marketplace_id"`                         // 市场id
 	ConfigID        int32     `gorm:"column:config_id;not null;comment:nacos配置中的id" json:"config_id"`                            // nacos配置中的id
 	SqsArn          string    `gorm:"column:sqs_arn;comment:SQS arn" json:"sqs_arn"`                                             // SQS arn
+	SqsURL          string    `gorm:"column:sqs_url;comment:sqs_url" json:"sqs_url"`                                             // sqs_url
 	IamRoot         string    `gorm:"column:iam_root;comment:aws账号iam root" json:"iam_root"`                                     // aws账号iam root
 	TopicArn        string    `gorm:"column:topic_arn;comment:主题arn" json:"topic_arn"`                                           // 主题arn
 	ClientID        string    `gorm:"column:client_id;comment:开发者账号 client_id" json:"client_id"`                                 // 开发者账号 client_id
@@ -28,6 +29,8 @@ type AmzStreamSubscribe struct {
 	AccessTokenTime time.Time `gorm:"column:access_token_time;comment:access token创建时间" json:"access_token_time"`                // access token创建时间
 	AccountType     int32     `gorm:"column:account_type;comment:开发者账号类型: 0-私有账号, 1-公共账号" json:"account_type"`                   // 开发者账号类型: 0-私有账号, 1-公共账号
 	RefreshToken    string    `gorm:"column:refresh_token;comment:开发者账号的 refresh token" json:"refresh_token"`                    // 开发者账号的 refresh token
+	DestinationID   string    `gorm:"column:destinationId;comment:sqs的destination的id, 亚马逊返回" json:"destinationId"`               // sqs的destination的id, 亚马逊返回
+	DestinationName string    `gorm:"column:destinationName;comment:sqs的destination的name, 开发者定义" json:"destinationName"`         // sqs的destination的name, 开发者定义
 	CreateTime      time.Time `gorm:"column:create_time;not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"`     // 创建时间
 	UpdateTime      time.Time `gorm:"column:update_time;not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time"`     // 更新时间
 }

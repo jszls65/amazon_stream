@@ -4,7 +4,6 @@ package subfunc
 
 import (
 	"amazon_stream/common"
-	"fmt"
 	"github.com/stretchr/objx"
 	"strconv"
 	"strings"
@@ -12,23 +11,28 @@ import (
 )
 
 var queue string // sqs arn
+var queueUrl string
 var queueRootArn string
-var topic string // topic arn
+var topic string   // topic arn
+var configId int32 // topic arn
 
 // GenSqsPolicy 生成sqs的访问策略
 func GenSqsPolicy(shopName string) map[string]interface{} {
 	shopData := common.GetShopDataMap(shopName)
-	if shopData.SqsArn == "" || shopData.IamRoot == "" || shopData.TopicArn == "" {
+	if shopData.SqsArn == "" || shopData.IamRoot == "" || shopData.TopicArn == "" || shopData.SqsURL == "" {
 		return objx.Map{
 			"错误":       "表中缺少数据",
 			"SqsArn":   shopData.SqsArn,
+			"SqsUrl":   shopData.SqsURL,
 			"IamRoot":  shopData.IamRoot,
 			"TopicArn": shopData.TopicArn,
 		}
 	}
 	queue = shopData.SqsArn
+	queueUrl = shopData.SqsURL
 	queueRootArn = shopData.IamRoot
 	topic = shopData.TopicArn
+	configId = shopData.ConfigID
 
 	mapList := make([]objx.Map, 0)
 	// queueRoot
@@ -36,7 +40,7 @@ func GenSqsPolicy(shopName string) map[string]interface{} {
 	// sns
 	mapList = append(mapList, replaceCon(sns))
 	// amazonOpt
-	mapList = append(mapList, replaceCon(amazonOpt))
+	//mapList = append(mapList, replaceCon(amazonOpt))
 
 	// 公共
 	mapList = append(mapList, replaceCon(gonggong))
@@ -61,22 +65,24 @@ func GenSqsPolicy(shopName string) map[string]interface{} {
 	// targets
 	mapList = append(mapList, replaceCon(targets))
 
+	// 订单小时级别数据配置
+	//mapList = append(mapList, replaceCon(orderOpt))
+
 	// 主内容
 	mainMap := objx.MustFromJSON(mainStr)
 	mainMap["Statement"] = mapList
-	mainMap["Id"] = getId("main")
-	str := common.ToJsonStr(mainMap)
-	fmt.Println("sqs访问策略")
-	fmt.Println(str)
+	mainMap["Id"] = common.GetId("main")
+	// 角色策略
 	rolePolicy = strings.ReplaceAll(rolePolicy, "{queue}", queue)
 	rolePolicy = strings.ReplaceAll(rolePolicy, "{topic}", topic)
-	fmt.Println("角色访问策略")
-	fmt.Println(rolePolicy)
-
+	// nacos配置
+	nacosConfig = strings.ReplaceAll(nacosConfig, "{config-id}", strconv.Itoa(int(configId)))
+	nacosConfig = strings.ReplaceAll(nacosConfig, "{queue-url}", queueUrl)
 	// 返回值
 	resultMap := objx.Map{
-		"sqsPolicy":  mainMap,
-		"rolePolicy": objx.MustFromJSON(rolePolicy),
+		"sqs策略":   mainMap,
+		"角色策略":    objx.MustFromJSON(rolePolicy),
+		"nacos配置": objx.MustFromJSON(nacosConfig),
 	}
 	return resultMap
 }
@@ -313,3 +319,5 @@ var rolePolicy = `{"list":[{
         "{queue}"
     ]
 }]}`
+
+var nacosConfig = `{"nacos配置id={config-id}":"sqsStandPath: {queue-url}"}`

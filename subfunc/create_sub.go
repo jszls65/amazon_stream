@@ -5,7 +5,6 @@ package subfunc
 import (
 	"amazon_stream/common"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -39,14 +38,6 @@ func CreateSub(shopName string, accessToken string, dataSetId string) *http.Resp
 	fmt.Println("请求头: \n", common.ToJsonStr(req.Header))
 	resp, err := http.DefaultClient.Do(req)
 	common.HandleError(err)
-	defer common.CloseRspBody(resp) // 这步是必要的，防止以后的内存泄漏，切记
-	fmt.Println("返回code:", resp.StatusCode, " msg:", resp.Status)
-	respBodyBytes, err := io.ReadAll(resp.Body) // 读取响应 body, 返回为 []byte
-	common.HandleError(err)
-	respBodyStr := string(respBodyBytes)
-	fmt.Println("请求结束, body:", respBodyStr)
-	if !strings.Contains(respBodyStr, "subscriptionId") {
-		fmt.Println("创建订阅失败")
-	}
+	//defer common.CloseRspBody(resp) // 这步是必要的，防止以后的内存泄漏，切记
 	return resp
 }

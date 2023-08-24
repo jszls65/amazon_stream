@@ -10,12 +10,14 @@ import (
 )
 
 var accessToken string
+var refreshToken string
 
 func main() {
 	r := gin.Default()
 	// 查询订阅信息
 	r.GET("subscribe/getInfo", func(c *gin.Context) {
 		shopName := c.Query("shopName")
+		refreshToken = c.Query("refreshToken")
 		if shopName == "" {
 			c.JSON(400, gin.H{
 				"data": "参数异常",
@@ -41,8 +43,8 @@ func main() {
 		// 创建订阅
 		response := create(shopName, dataSetId)
 		c.JSON(200, gin.H{
-			"msg":  "执行成功",
-			"data": response,
+			"msg":  response.Status,
+			"data": response.StatusCode,
 		})
 	})
 
@@ -95,7 +97,7 @@ func create(shopName string, dataSetId string) *http.Response {
 
 // 查询订阅结果
 func getSubscribeResults(shopName string) []string {
-	if accessToken == "" {
+	if accessToken == "" || refreshToken == "true" {
 		accessToken = subfunc.GenAccessToken(shopName)
 	}
 	return subfunc.ListSub(shopName, accessToken)
