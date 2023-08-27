@@ -5,8 +5,11 @@ package main
 import (
 	"amazon_stream/common"
 	"amazon_stream/subfunc"
-	"github.com/gin-gonic/gin"
+	"fmt"
 	"net/http"
+	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 var accessToken string
@@ -40,11 +43,19 @@ func main() {
 			})
 			return
 		}
-		// 创建订阅
-		response := create(shopName, dataSetId)
+		split := strings.Split(dataSetId, ",")
+		for _, ds := range split {
+			// 创建订阅
+			resp := create(shopName, ds)
+			if resp.StatusCode == 200{
+				fmt.Println(ds, " 订阅成功");
+			}else{
+				fmt.Println(ds, " 订阅失败");
+			}
+		}
+
 		c.JSON(200, gin.H{
-			"msg":  response.Status,
-			"data": response.StatusCode,
+			"msg":  "执行结束",
 		})
 	})
 
@@ -89,16 +100,12 @@ func main() {
 
 // 创建订阅
 func create(shopName string, dataSetId string) *http.Response {
-	if accessToken == "" {
-		accessToken = subfunc.GenAccessToken(shopName)
-	}
+	accessToken = subfunc.GenAccessToken(shopName)
 	return subfunc.CreateSub(shopName, accessToken, dataSetId)
 }
 
 // 查询订阅结果
 func getSubscribeResults(shopName string) []string {
-	if accessToken == "" || refreshToken == "true" {
-		accessToken = subfunc.GenAccessToken(shopName)
-	}
+	accessToken = subfunc.GenAccessToken(shopName)
 	return subfunc.ListSub(shopName, accessToken)
 }
