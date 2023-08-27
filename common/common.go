@@ -83,5 +83,5 @@ func ToJsonStr(st interface{}) string {
 }
 
 func GetId(pre string) string {
-	return pre + strconv.Itoa(int(time.Now().Unix()))
+	return pre + strconv.Itoa(int(time.Now().UnixNano()))
 }
