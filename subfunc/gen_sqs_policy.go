@@ -15,6 +15,28 @@ var queueRootArn string
 var topic string   // topic arn
 var configId int32 // topic arn
 
+var mainStr string
+// 公共
+var gonggong string
+var spTraffic string
+var spConversion string
+var sdTraffic string
+var sdConversion string
+var budgetUsage string
+var sponsoredAdsCampaignDiagnosticsRecommendations string
+var campaigns string
+var adgroups string
+var ads string
+var targets string
+var queueRoot string
+var sns string
+// 亚马逊对sqs的操作
+var amazonOpt string
+// 订单小时级别数据
+var orderOpt string
+var rolePolicy string
+var nacosConfig string
+
 // GenSqsPolicy 生成sqs的访问策略
 func GenSqsPolicy(shopName string) map[string]interface{} {
 	shopData := common.GetShopDataMap(shopName)
@@ -27,6 +49,9 @@ func GenSqsPolicy(shopName string) map[string]interface{} {
 			"TopicArn": shopData.TopicArn,
 		}
 	}
+
+	initOriginJson()
+
 	queue = shopData.SqsArn
 	queueUrl = shopData.SqsURL
 	queueRootArn = shopData.IamRoot
@@ -65,7 +90,7 @@ func GenSqsPolicy(shopName string) map[string]interface{} {
 	mapList = append(mapList, replaceCon(targets))
 
 	// 订单小时级别数据配置
-	//mapList = append(mapList, replaceCon(orderOpt))
+	mapList = append(mapList, replaceCon(orderOpt))
 
 	// 主内容
 	mainMap := objx.MustFromJSON(mainStr)
@@ -79,29 +104,22 @@ func GenSqsPolicy(shopName string) map[string]interface{} {
 	nacosConfig = strings.ReplaceAll(nacosConfig, "{queue-url}", queueUrl)
 	// 返回值
 	resultMap := objx.Map{
-		"sqs策略":   mainMap,
-		"角色策略":    objx.MustFromJSON(rolePolicy),
-		"nacos配置": objx.MustFromJSON(nacosConfig),
+		"a_nacos_config": objx.MustFromJSON(nacosConfig),
+		"b_role_policy":    objx.MustFromJSON(rolePolicy),
+		"c_sqs_policy":   mainMap,
 	}
 	return resultMap
 }
 
-// 替换内容
-func replaceCon(str string) objx.Map {
-	str = strings.ReplaceAll(str, "{id}", common.GetId("Item"))
-	str = strings.ReplaceAll(str, "{queue}", queue)
-	str = strings.ReplaceAll(str, "{topic}", topic)
-	str = strings.ReplaceAll(str, "{queue-root}", queueRootArn)
-	return objx.MustFromJSON(str)
-}
+func initOriginJson() {
 
-var mainStr = `{
+	mainStr = `{
   "Version": "2012-10-17",
   "Id": "{id}"
 }`
 
-// 公共
-var gonggong = `{
+	// 公共
+	gonggong = `{
       "Sid": "{id}",
       "Effect": "Allow",
       "Principal": {
@@ -111,7 +129,7 @@ var gonggong = `{
       "Resource": "*"
     }`
 
-var spTraffic = `
+	spTraffic = `
 	{
       "Sid": "{id}",
       "Effect": "Allow",
@@ -127,7 +145,7 @@ var spTraffic = `
       }
     }`
 
-var spConversion = ` {
+	spConversion = ` {
       "Sid": "{id}",
       "Effect": "Allow",
       "Principal": {
@@ -142,7 +160,7 @@ var spConversion = ` {
       }
     }`
 
-var sdTraffic = `{
+	sdTraffic = `{
       "Sid": "{id}",
       "Effect": "Allow",
       "Principal": {
@@ -157,7 +175,7 @@ var sdTraffic = `{
       }
     }`
 
-var sdConversion = `{
+	sdConversion = `{
       "Sid": "{id}",
       "Effect": "Allow",
       "Principal": {
@@ -172,7 +190,7 @@ var sdConversion = `{
       }
     }`
 
-var budgetUsage = `{
+	budgetUsage = `{
       "Sid": "{id}",
       "Effect": "Allow",
       "Principal": {
@@ -187,7 +205,7 @@ var budgetUsage = `{
       }
     }`
 
-var sponsoredAdsCampaignDiagnosticsRecommendations = `{
+	sponsoredAdsCampaignDiagnosticsRecommendations = `{
       "Sid": "{id}",
       "Effect": "Allow",
       "Principal": {
@@ -202,7 +220,7 @@ var sponsoredAdsCampaignDiagnosticsRecommendations = `{
       }
     }`
 
-var campaigns = `{
+	campaigns = `{
       "Sid": "{id}",
       "Effect": "Allow",
       "Principal": {
@@ -217,7 +235,7 @@ var campaigns = `{
       }
     }`
 
-var adgroups = ` {
+	adgroups = ` {
       "Sid": "{id}",
       "Effect": "Allow",
       "Principal": {
@@ -232,7 +250,7 @@ var adgroups = ` {
       }
     }`
 
-var ads = `{
+	ads = `{
 	  "Sid": "{id}",
       "Effect": "Allow",
       "Principal": {
@@ -247,7 +265,7 @@ var ads = `{
       }
     }`
 
-var targets = `{
+	targets = `{
 	  "Sid": "{id}",
       "Effect": "Allow",
       "Principal": {
@@ -262,7 +280,7 @@ var targets = `{
       }
     }`
 
-var queueRoot = `{
+	queueRoot = `{
       "Sid": "{id}",
       "Effect": "Allow",
       "Principal": {
@@ -271,7 +289,7 @@ var queueRoot = `{
       "Action": "SQS:*",
       "Resource": "{queue}"
     }`
-var sns = ` {
+	sns = ` {
       "Sid": "{id}",
       "Effect": "Allow",
       "Principal": {
@@ -286,8 +304,8 @@ var sns = ` {
       }
     }`
 
-// 亚马逊对sqs的操作
-var amazonOpt = `{
+	// 亚马逊对sqs的操作
+	amazonOpt = `{
       "Sid": "{id}",
       "Effect": "Allow",
       "Principal": {
@@ -300,8 +318,8 @@ var amazonOpt = `{
       "Resource": "{queue}"
     }`
 
-// 订单小时级别数据
-var orderOpt = `{
+	// 订单小时级别数据
+	orderOpt = `{
       "Sid": "{id}",
       "Action": [
         "sqs:GetQueueAttributes",
@@ -316,7 +334,7 @@ var orderOpt = `{
       }
     }`
 
-var rolePolicy = `{"list":[{
+	rolePolicy = `{"list":[{
     "Effect": "Allow",
     "Action": "sns:Publish",
     "Resource": "{topic}"
@@ -332,4 +350,15 @@ var rolePolicy = `{"list":[{
     ]
 }]}`
 
-var nacosConfig = `{"nacos配置id={config-id}":"sqsStandPath: {queue-url}"}`
+	nacosConfig = `{"nacos配置 id: {config-id}":"sqsStandPath: {queue-url}"}`
+
+}
+
+// 替换内容
+func replaceCon(str string) objx.Map {
+	str = strings.ReplaceAll(str, "{id}", common.GetId("Item"))
+	str = strings.ReplaceAll(str, "{queue}", queue)
+	str = strings.ReplaceAll(str, "{topic}", topic)
+	str = strings.ReplaceAll(str, "{queue-root}", queueRootArn)
+	return objx.MustFromJSON(str)
+}

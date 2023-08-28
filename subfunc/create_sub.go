@@ -13,6 +13,10 @@ import (
 
 // CreateSub 创建订阅
 func CreateSub(shopName string, accessToken string, dataSetId string) *http.Response {
+	if accessToken == "" {
+		log.Fatalln("accessToken为空")
+		return nil
+	}
 	log.Println("创建订阅方法入参,shopName:", shopName, "; dataSetId:", dataSetId)
 	shopData := common.GetShopDataMap(shopName)
 
