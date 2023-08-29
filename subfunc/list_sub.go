@@ -7,12 +7,17 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 )
 
 // ListSub 查询店铺的所有订阅
 func ListSub(shopName string, accessToken string) []string {
+	if accessToken == "" {
+		log.Fatalln("accessToken不能为空")
+		return nil
+	}
 	shopData := common.GetShopDataMap(shopName)
 	httpUrl := "https://advertising-api.amazon.com/streams/subscriptions?maxResults=30"
 	req, err := http.NewRequest("GET", httpUrl, nil)

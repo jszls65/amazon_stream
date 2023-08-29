@@ -5,22 +5,19 @@ package main
 import (
 	"amazon_stream/common"
 	"amazon_stream/subfunc"
-	"fmt"
-	"net/http"
 	"strings"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 )
 
 var accessToken string
-var refreshToken string
 
 func main() {
 	r := gin.Default()
 	// 查询订阅信息
 	r.GET("subscribe/getInfo", func(c *gin.Context) {
 		shopName := c.Query("shopName")
-		refreshToken = c.Query("refreshToken")
 		if shopName == "" {
 			c.JSON(400, gin.H{
 				"data": "参数异常",
@@ -32,6 +29,7 @@ func main() {
 			"data": subInfo,
 		})
 	})
+
 	// 创建订阅信息
 	r.GET("subscribe/create", func(c *gin.Context) {
 		shopName := c.Query("shopName")
@@ -44,18 +42,28 @@ func main() {
 			return
 		}
 		split := strings.Split(dataSetId, ",")
-		for _, ds := range split {
-			// 创建订阅
-			resp := create(shopName, ds)
-			if resp.StatusCode == 200{
-				fmt.Println(ds, " 订阅成功");
-			}else{
-				fmt.Println(ds, " 订阅失败");
-			}
-		}
+		var wg sync.WaitGroup
+		wg.Add(len(split))
+		resultList := make([]string, 0)
 
+		// 创建token
+		accessToken = subfunc.GenAccessToken(shopName)
+		for _, ds := range split {
+			go func(ds string) {
+				// 创建订阅
+				resp := subfunc.CreateSub(shopName, accessToken, ds)
+				if resp.StatusCode == 200 {
+					resultList = append(resultList, ds+" 订阅成功")
+				} else {
+					resultList = append(resultList, ds+" 订阅失败")
+				}
+				wg.Done()
+			}(ds)
+		}
+		wg.Wait()
 		c.JSON(200, gin.H{
 			"msg":  "执行结束",
+			"data": resultList,
 		})
 	})
 
@@ -96,12 +104,6 @@ func main() {
 
 	err := r.Run(":8082")
 	common.HandleError(err)
-}
-
-// 创建订阅
-func create(shopName string, dataSetId string) *http.Response {
-	accessToken = subfunc.GenAccessToken(shopName)
-	return subfunc.CreateSub(shopName, accessToken, dataSetId)
 }
 
 // 查询订阅结果
