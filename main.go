@@ -5,6 +5,7 @@ package main
 import (
 	"amazon_stream/common"
 	"amazon_stream/subfunc"
+	"net/http"
 	"strings"
 	"sync"
 
@@ -15,6 +16,13 @@ var accessToken string
 
 func main() {
 	r := gin.Default()
+	r.LoadHTMLGlob("templates/*")
+	r.Static("/static", "./static")
+	r.GET("/index", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", gin.H{
+			"title": "Main website",
+		})
+	})
 	// 查询订阅信息
 	r.GET("subscribe/getInfo", func(c *gin.Context) {
 		shopName := c.Query("shopName")
