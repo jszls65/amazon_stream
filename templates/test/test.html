@@ -1,0 +1,25 @@
+{{ define "test/test.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{.title}}</title>
+</head>
+<body>
+    {{.title}}
+    <hr>
+    切片: <br>
+    {{range $index,$val := .sliceLlist}}
+    {{$index}} ----- {{$val}}
+    {{end}}
+
+    <hr>
+    条件判断<br>
+    {{if gt .score 60}}
+    成绩大于60
+    {{else}}
+    成绩小于等于60
+    {{end}}
+</body>
+</html>
+{{end}}

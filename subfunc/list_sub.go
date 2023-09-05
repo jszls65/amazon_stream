@@ -27,11 +27,13 @@ func ListSub(shopName string, accessToken string) []string {
 	req.Header.Add("Amazon-Advertising-API-Scope", strconv.FormatInt(shopData.ProfileID, 10))
 	req.Header.Add("Authorization", "Bearer "+accessToken)
 	resp, err := http.DefaultClient.Do(req)
+	if resp.StatusCode == 401 {
+		return []string{resp.Status}
+	}
 	common.HandleError(err)
 	bodyJsonStr := common.GetRespBodyStr(resp.Body)
 	var str bytes.Buffer
 	_ = json.Indent(&str, []byte(bodyJsonStr), "", "    ")
-	fmt.Println(str.String())
 	//校验数据集订阅状态
 	return checkDataSetState(bodyJsonStr, shopData.SqsArn)
 }

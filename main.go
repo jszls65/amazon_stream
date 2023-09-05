@@ -16,8 +16,20 @@ var accessToken string
 
 func main() {
 	r := gin.Default()
-	r.LoadHTMLGlob("templates/*")
+	// 加载html
+	r.LoadHTMLGlob("templates/**/*")
 	r.Static("/static", "./static")
+
+	// 测试模板
+	r.GET("/test", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "test/test.html", gin.H{
+			"title": "Main website",
+			"sliceLlist": []string{"张三", "李四", "王五"},
+			"score": 60,
+		})
+	})
+
+
 	r.GET("/index", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"title": "Main website",
@@ -63,7 +75,7 @@ func main() {
 				if resp.StatusCode == 200 {
 					resultList = append(resultList, ds+" 订阅成功")
 				} else {
-					resultList = append(resultList, ds+" 订阅失败")
+					resultList = append(resultList, ds+" 订阅失败:" + resp.Status)
 				}
 				wg.Done()
 			}(ds)
