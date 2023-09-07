@@ -16,6 +16,7 @@ var topic string   // topic arn
 var configId int32 // topic arn
 
 var mainStr string
+
 // 公共
 var gonggong string
 var spTraffic string
@@ -30,8 +31,10 @@ var ads string
 var targets string
 var queueRoot string
 var sns string
+
 // 亚马逊对sqs的操作
 var amazonOpt string
+
 // 订单小时级别数据
 var orderOpt string
 var rolePolicy string
@@ -64,7 +67,7 @@ func GenSqsPolicy(shopName string) map[string]interface{} {
 	// sns
 	mapList = append(mapList, replaceCon(sns))
 	// amazonOpt
-	//mapList = append(mapList, replaceCon(amazonOpt))
+	mapList = append(mapList, replaceCon(amazonOpt))
 
 	// 公共
 	mapList = append(mapList, replaceCon(gonggong))
@@ -90,7 +93,7 @@ func GenSqsPolicy(shopName string) map[string]interface{} {
 	mapList = append(mapList, replaceCon(targets))
 
 	// 订单小时级别数据配置
-	mapList = append(mapList, replaceCon(orderOpt))
+	// mapList = append(mapList, replaceCon(orderOpt))
 
 	// 主内容
 	mainMap := objx.MustFromJSON(mainStr)
@@ -105,7 +108,7 @@ func GenSqsPolicy(shopName string) map[string]interface{} {
 	// 返回值
 	resultMap := objx.Map{
 		"a_nacos_config": objx.MustFromJSON(nacosConfig),
-		"b_role_policy":    objx.MustFromJSON(rolePolicy),
+		"b_role_policy":  objx.MustFromJSON(rolePolicy),
 		"c_sqs_policy":   mainMap,
 	}
 	return resultMap
@@ -304,7 +307,7 @@ func initOriginJson() {
       }
     }`
 
-	// 亚马逊对sqs的操作
+	// 亚马逊对sqs的操作, 订单小时级别数据配置
 	amazonOpt = `{
       "Sid": "{id}",
       "Effect": "Allow",
