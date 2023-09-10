@@ -10,7 +10,7 @@ type IndexController struct {
 }
 
 func (in IndexController) Index(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.html", gin.H{
+	c.HTML(http.StatusOK, "index/index.html", gin.H{
 		"title": "Main website",
 	})
 }

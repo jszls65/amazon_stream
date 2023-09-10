@@ -1,0 +1,50 @@
+.page_footer{
+
+    position: relative;
+    margin-top: 30px;
+    height: 30px;
+    text-align: center;
+    font-size: xx-small;
+    color: darkgray;
+}
+
+body{
+    height: 100%;
+}
+
+.bodyDiv{
+    display: flex;
+    justify-content: space-around;
+    min-height: 85%;
+    height: auto !important;
+}
+.bodyDiv div{
+    height: 400px;
+    width: 48%;
+}
+.bodyDiv div textarea{
+    height: 98%;
+    width: 99%;
+}
+.firstRow{
+    display: flex;
+    justify-content: left;
+    margin-bottom: 5px;
+    margin-left: 15px;
+}
+.firstRow div{
+    height: 30px;
+    line-height: 30px;
+    margin-bottom: 10px;
+}
+
+.button-group{
+    margin-left: 10px;
+}
+#inputContent{
+    border: 1px solid #1B9AF7;
+    height: 36px;
+    width: 240px;
+    padding-left: 10px;
+    margin-left: 5px;
+}

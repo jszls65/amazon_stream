@@ -1,0 +1,42 @@
+{{ define "index/index.html"}}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="/static/css/buttons.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/css/base.css"/>
+    <script src="/static/js/jquery.js"></script>
+    <script src="/static/js/index.js"></script>
+    <title>工具包</title>
+</head>
+<body>
+<div class="firstRow">
+    <div class="className"><input type="text" id="inputContent" placeholder="请输入..."/></div>
+    <div class="button-group">
+        <button type="button" class="button button button-primary" onclick="mergeRequst();">MR</button>
+        <button type="button" class="button button button-primary" onclick="convertSql(1);">insert</button>
+        <button type="button" class="button button button-primary" onclick="convertSql(4);">update</button>
+        <button type="button" class="button button button-primary" onclick="convertSql(6);">table-alias</button>
+        <button type="button" class="button button button-primary" onclick="javaGetSet();">java-get-set</button>
+        <button type="button" class="button button button-primary" onclick="java2Json();">java-json</button>
+        <!-- <button type="button" class="button button button-primary" onclick="myReplace();">replace</button> -->
+      </div>
+</div>    
+<div class="bodyDiv">
+    <div class="codeDiv">
+        <textarea id="leftContent" width="100%" autoHeight="true" placeholder=""></textarea>
+    </div>
+    <div class="viewDiv">
+        <textarea id="rightContent" width="100%" autoHeight="true"></textarea>
+    </div>
+</div>
+    {{template "base/page_footer.html" .}}
+</body>
+
+<script>
+
+</script>
+</html>
+{{ end }}
