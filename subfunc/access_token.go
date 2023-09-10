@@ -30,5 +30,12 @@ func GenAccessToken(shopName string) string {
 	var rsp pojo.AccessTokenResp
 	err = json.Unmarshal(body, &rsp)
 	common.HandleError(err)
+	// 保存 access token
+	saveAccessToken(rsp.AccessToken, shopData.ID)
 	return rsp.AccessToken
+}
+
+// 保存 access token
+func saveAccessToken(token string, id int64) {
+	common.SaveAccessToken(token, id)
 }
