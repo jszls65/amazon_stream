@@ -15,6 +15,7 @@ import (
 func GenAccessToken(shopName string) string {
 
 	shopData := common.GetShopDataMap(shopName)
+	// todo 从数据库中获取token, 如果token没过期, 直接返回, 如果过期, 再请求接口生成.
 	httpUrl := "https://api.amazon.com/auth/o2/token?client_id=" + shopData.ClientID + "&client_secret=" + shopData.ClientSecret + "&grant_type=refresh_token&refresh_token=" + shopData.RefreshToken
 	req, _ := http.NewRequest("POST", httpUrl, nil)
 	req.Header.Add("Content-Type", "application/json")
