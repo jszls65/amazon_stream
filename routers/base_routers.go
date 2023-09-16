@@ -10,4 +10,5 @@ func InitRouters(r *gin.Engine) {
 	PolicyRoutersInit(r)
 	SubscribeRoutersInit(r)
 	DestinationsRouterInit(r)
+	ReportRouterInit(r)
 }

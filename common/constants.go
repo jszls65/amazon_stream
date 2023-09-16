@@ -18,6 +18,3 @@ var dataSetSlice = []string{
 func GetDataSetSlice() []string {
 	return dataSetSlice
 }
-
-// TimeTemplate 时间模板
-const TimeTemplate string = "2006-01-02 15:04:05"

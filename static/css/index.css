@@ -48,3 +48,12 @@ body{
     padding-left: 10px;
     margin-left: 5px;
 }
+
+.clearAll{
+    display: flex;
+    height: 20px;
+    line-height: 20px;
+    margin-top: 22px;
+    font-size: 12px;
+    padding-left: 7px;
+}

@@ -13,11 +13,11 @@ $("#inputContent").focus(function(event){
  * 转换方法
  */
 function  convertSql(sence){
-
+    
     // 获取表名
     var inputContent = $('#inputContent').val() || "";
     if(($('#inputContent').val() || "") == ''){
-
+        
         $('#inputContent').attr("placeholder", "请输入表名和别名: table_name a");
         $('#inputContent').select();
         return
@@ -49,6 +49,8 @@ function  convertSql(sence){
                 }
                 camelNameList.push("#{"+ toCamelWord(fieldName) +"}");
             });
+
+            var keyValList = getDuplicateKeyItems(fieldNameList);
             // 加 insert
             newLines.push(' ----------------  insert ----------------  ');
             newLines.push(' ');
@@ -56,28 +58,8 @@ function  convertSql(sence){
             newLines.push('    ('+fieldNameList.join(', ')+')')
             newLines.push('values');
             newLines.push('    ('+camelNameList.join(', ')+')');
-
-        case 2:  // 批量insert
-            // 转换后的变量行列表
-            var camelNameList = [];
-            // 遍历每一行
-            fieldNameList.forEach(function(fieldName){
-                if(isBlankLine(fieldName)){
-                    return;
-                }
-                camelNameList.push("#{item." + toCamelWord(fieldName)+"}");
-            });
-            // 加 insert
-            newLines.push(' ');
-            newLines.push(' ----------------  批量insert ----------------  ');
-            newLines.push(' ');
-            newLines.push("insert into " + tableName + "");
-            newLines.push('    ('+fieldNameList.join(', ')+')')
-            newLines.push('values');
-            newLines.push('<foreach collection="list" item="item" separator=",">');
-            newLines.push('    ('+camelNameList.join(', ')+')');
-            newLines.push('</foreach>');
-
+            newLines.push('    on duplicate key update ');
+            newLines.push(' ' + keyValList.join(', '));
         case 3:  // 批量insert on duplicate key
             // 转换后的变量行列表
             var camelNameList = [];
@@ -89,30 +71,22 @@ function  convertSql(sence){
                 camelNameList.push("#{item." + toCamelWord(fieldName)+"}");
             });
 
-            var keyValList = [];
-            // 遍历每一个字段名
-            fieldNameList.forEach(function(fieldName){
-                if(isBlankLine(fieldName)){
-                    return;
-                }
-                keyValList.push(fieldName + " = #{item."+ toCamelWord(fieldName)+"}");
-            });
-
+            var keyValList = getDuplicateKeyItems(fieldNameList);
             // 加 insert
             newLines.push(' ');
-            newLines.push(' ----------------  批量insert on duplicate key ----------------  ');
+            newLines.push(' ----------------  批量 insert ----------------  ');
             newLines.push(' ');
             newLines.push('<foreach collection="list" item="item" separator=";">');
             newLines.push("insert into " + tableName + "");
             newLines.push('    ('+fieldNameList.join(', ')+')')
             newLines.push('values');
-
+            
             newLines.push('    ('+camelNameList.join(', ')+')');
             newLines.push('    on duplicate key update ');
             newLines.push(' ' + keyValList.join(', '));
             newLines.push('</foreach>');
             break;
-        case 4:
+        case 4:  
             var keyValList = [];
             // 遍历每一个字段名
             fieldNameList.forEach(function(fieldName){
@@ -142,7 +116,7 @@ function  convertSql(sence){
             newLines.push('<foreach collection="list" item="item" separator=";">');
             newLines.push("    update " + tableName + " set ");
             newLines.push('    '+keyValList.join(', '));
-            newLines.push('    where id = #{id}')
+            newLines.push('    where id = #{item.id}')
             newLines.push('</foreach>');
             break;
         case 6:
@@ -151,7 +125,7 @@ function  convertSql(sence){
     }
     // 将转换后的内容写入右侧输入框
     $('#rightContent').val(newLines.join('\n'));
-
+    
 }
 
 // 将下划线 转成 驼峰
@@ -185,7 +159,7 @@ function getInputContentFieldList(){
     }
     content = content.replace(new RegExp(" |\n|`","g"), '');
     content = content.toLowerCase();
-
+    
     // 忽略的字段
     var ignoreFieldNames = ['id', 'mod_time', 'add_time', 'create_time', 'update_time'];
     var newLines = [];
@@ -201,7 +175,7 @@ function getInputContentFieldList(){
 /**
  * 转换方法
  */
-function javaGetSet(){
+ function javaGetSet(){
     // 获取目标类名
     var targetName = $('#inputContent').val() || "className";
 
@@ -233,13 +207,13 @@ function javaGetSet(){
 /**
  * java 转成 json
  */
-function java2Json(){
+ function java2Json(){
     // 获取左侧输入框的内容
     var lines = getInputLines();
     if(lines.length == 0){
         return;
     }
-
+    
     // 转换后的json行
     var jsonLineList = ["{"];
     var fieldObjList = getFieldObjList(lines);
@@ -256,8 +230,8 @@ function java2Json(){
 
 //对字符串扩展
 String.prototype.resetBlank=function(){
-    var regEx = /\s+/g;
-    return this.replace(regEx, ' ');
+    var regEx = /\s+/g; 
+    return this.replace(regEx, ' '); 
 };
 
 
@@ -271,10 +245,10 @@ function getJsonLine( field, dataType, desc, isLatsed){
     ['list', 'set', 'arraylist'].forEach(function(i){
         if(dataType.toLowerCase().indexOf(i) != -1){
             defaultVal = '["string01", "string02"]';
-            dataType = "数组";
+            dataType = "数组";    
         }
     });
-
+    
     return "    \""+field+"\": " + defaultVal + (isLatsed ? "": ",") + " // "+ dataType +" "+ desc;
 }
 
@@ -295,7 +269,7 @@ function getInputLines(){
         line = line.replace(';', '');
         line = line.resetBlank();
         newLines.push(line);
-
+        
     });
     return newLines;
 }
@@ -310,15 +284,15 @@ function getFieldObjList(lines){
     var desc = "";
     // 遍历每一行
     lines.forEach(function(line){
-
+        
         // 跳过包, 导包, 注释, 注解, 常量, 类
-        if(line.indexOf('/*') != -1 || line.indexOf('*/') != -1 || line.startsWith('package')
-            || line.startsWith('import') || line.indexOf('@') != -1
+        if(line.indexOf('/*') != -1 || line.indexOf('*/') != -1 || line.startsWith('package') 
+            || line.startsWith('import') || line.indexOf('@') != -1  
             || line.indexOf('static') != -1 || line.indexOf('final') != -1
             || line.indexOf('public class') != -1) {
             return;
         }
-
+        
         // 跳过方法
         if(line.indexOf('{') != -1){
             methodFlag = true;
@@ -331,7 +305,7 @@ function getFieldObjList(lines){
         if(methodFlag){
             return;
         }
-
+        
         if(line.startsWith('*') || line.startsWith('//')){
             // 得到注释
             line = line.replaceAll('*','');
@@ -352,7 +326,7 @@ function getFieldObjList(lines){
             'desc': desc
         });
         desc = "";
-
+     
     });
 
     return jsonObjList;
@@ -412,7 +386,28 @@ function myReplace(){
                 leftContent = leftContent.replaceAll(originStr, " " + i + suffix +" ")
             }
         }
-
+        
     })
     $("#rightContent").val(results.join(", "))
+}
+
+function clearAll(){
+    $("#inputContent").val("");
+    $("#leftContent").val("");
+    $("#rightContent").val("");
+
+    $("#inputContent").select();
+    $('#inputContent').attr("placeholder", "请输入...");
+}
+
+function getDuplicateKeyItems(fieldNameList){
+    var keyValList = [];
+    // 遍历每一个字段名
+    fieldNameList.forEach(function(fieldName){
+        if(isBlankLine(fieldName)){
+            return;
+        }
+        keyValList.push(fieldName + " = #{item."+ toCamelWord(fieldName)+"}");
+    });
+    return keyValList;
 }
