@@ -5,8 +5,6 @@ package datasource
 import (
 	"amazon_stream/conf"
 	"fmt"
-	"strconv"
-
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -16,17 +14,17 @@ import (
 var _db *gorm.DB
 
 func init() {
-	//配置MySQL连接参数 todo 不能提交
+	//配置MySQL连接参数
 	username := conf.GetMysqlConfig("username") //账号
 	password := conf.GetMysqlConfig("password") //密码
 	host := conf.GetMysqlConfig("host")         //数据库地址，可以是Ip或者域名
-	port, _ := strconv.Atoi(conf.GetMysqlConfig("port"))        //数据库端口
+	port := conf.GetMysqlConfig("port")         //数据库端口
 	//Dbname := "smart-test"                                  //数据库名
 	Dbname := conf.GetMysqlConfig("dbname") //数据库名
 	timeout := conf.GetMysqlConfig("timeout")
 
 	//拼接下dsn参数, dsn格式可以参考上面的语法，这里使用Sprintf动态拼接dsn参数，因为一般数据库连接参数，我们都是保存在配置文件里面，需要从配置文件加载参数，然后拼接dsn。
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local&timeout=%s", username, password, host, port, Dbname, timeout)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local&timeout=%s", username, password, host, port, Dbname, timeout)
 
 	// 声明err变量，下面不能使用:=赋值运算符，否则_db变量会当成局部变量，导致外部无法访问_db变量
 	var err error

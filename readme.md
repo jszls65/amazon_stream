@@ -26,7 +26,9 @@ Amazon Marketing Stream 是亚马逊广告业务的信息流.
 1. 生成 access token
 2. 创建订阅
 3. 查询订阅
-4. 更新订阅(todo)
+4. 更新订阅
+5. 一键生成SQS访问策略
+6. 一键生成角色权限访问策略
 
 ## 订阅状态
 ![状态](https://d3a0d0y2hgofx6.cloudfront.net/en-us/_images/amazon-marketing-stream/state-diagram.png)
@@ -38,6 +40,8 @@ Amazon Marketing Stream 是亚马逊广告业务的信息流.
 3. 赞助广告预算使用 (budget-usage)
 4. 展示流量（sd-traffic）
 5. 展示转化（sd-conversion）
+6. 品牌流量（sb-traffic）
+7. 品牌转化（sb-conversion）
 
 订单: 目前支持的类型: 
 1. 订单项时间变化数据(ITEM_SALES_EVENT_CHANGE)
@@ -50,5 +54,9 @@ https://advertising.amazon.com/API/docs/en-us/guides/amazon-marketing-stream/ove
 二、如何确认订阅
 创建订阅后, 订阅状态是待确认, 随后AWS账号下的SQS上会收到待确认消息, 从消息体中拿到确认订阅URL, 放到浏览器上访问一下即可, 这样订阅才算最终成功, 亚马逊才能把广告数据近实时的推送到SQS上.
 
-至于看了官方文档还是无法完成订阅, 可以发issue或邮件jszls65@qq.com探讨.
+至于看了官方文档还是无法完成订阅, 可以发issue或邮件`jszls65@qq.com`探讨.
 确实, 作者前期在调研的时候也是花了2周的时间, 才最终完成公共开发者账号和私有开发者账号的订阅.
+
+# 最后
+
+如果本项目对你有所启发或帮助, 欢迎📩交流, 欢迎Star
