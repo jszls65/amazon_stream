@@ -24,6 +24,9 @@ var spConversion string
 var sdTraffic string
 var sdConversion string
 var budgetUsage string
+var sbTraffic string
+var sbConversion string
+var sbClickstream string
 var sponsoredAdsCampaignDiagnosticsRecommendations string
 var campaigns string
 var adgroups string
@@ -91,6 +94,12 @@ func GenSqsPolicy(shopName string) map[string]interface{} {
 	mapList = append(mapList, replaceCon(ads))
 	// targets
 	mapList = append(mapList, replaceCon(targets))
+  // sbTaffice
+  mapList = append(mapList, replaceCon(sbTraffic))
+  // sbConversion
+  mapList = append(mapList, replaceCon(sbConversion))
+  // sbClickstream
+  mapList = append(mapList, replaceCon(sbClickstream))
 
 	// 订单小时级别数据配置
 	// mapList = append(mapList, replaceCon(orderOpt))
@@ -193,6 +202,50 @@ func initOriginJson() {
       }
     }`
 
+    sbTraffic = `{
+      "Sid": "{id}",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "sns.amazonaws.com"
+      },
+      "Action": "SQS:SendMessage",
+      "Resource": "{queue}",
+      "Condition": {
+        "ArnEquals": {
+          "aws:SourceArn": "arn:aws:sns:us-east-1:709476672186:*"
+        }
+      }
+    }`
+
+    sbConversion = `{
+      "Sid": "{id}",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "sns.amazonaws.com"
+      },
+      "Action": "SQS:SendMessage",
+      "Resource": "{queue}",
+      "Condition": {
+        "ArnEquals": {
+          "aws:SourceArn": "arn:aws:sns:us-east-1:154357381721:*"
+        }
+      }
+    }`
+
+    sbClickstream = ` {
+      "Sid": "{id}",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "sns.amazonaws.com"
+      },
+      "Action": "SQS:SendMessage",
+      "Resource": "{queue}",
+      "Condition": {
+        "ArnEquals": {
+          "aws:SourceArn": "arn:aws:sns:us-east-1:091028706140:*"
+        }
+      }
+    }`
 	budgetUsage = `{
       "Sid": "{id}",
       "Effect": "Allow",

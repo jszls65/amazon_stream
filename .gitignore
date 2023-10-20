@@ -17,7 +17,7 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
-
+conf/config.ini
 # Go workspace file
 go.work
 .idea

@@ -3,22 +3,27 @@
 package datasource
 
 import (
+	"amazon_stream/conf"
 	"fmt"
+	"strconv"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 // 定义全局的db对象，我们执行数据库操作主要通过他实现。
 var _db *gorm.DB
 
 func init() {
-	//配置MySQL连接参数
-	username := "**" //账号
-	password := "**" //密码
-	host := "**"     //数据库地址，可以是Ip或者域名
-	port := 3306     //数据库端口
-	Dbname := "**"   //数据库名
-	timeout := "10s" //连接超时，10秒
+	//配置MySQL连接参数 todo 不能提交
+	username := conf.GetMysqlConfig("username") //账号
+	password := conf.GetMysqlConfig("password") //密码
+	host := conf.GetMysqlConfig("host")         //数据库地址，可以是Ip或者域名
+	port, _ := strconv.Atoi(conf.GetMysqlConfig("port"))        //数据库端口
+	//Dbname := "smart-test"                                  //数据库名
+	Dbname := conf.GetMysqlConfig("dbname") //数据库名
+	timeout := conf.GetMysqlConfig("timeout")
 
 	//拼接下dsn参数, dsn格式可以参考上面的语法，这里使用Sprintf动态拼接dsn参数，因为一般数据库连接参数，我们都是保存在配置文件里面，需要从配置文件加载参数，然后拼接dsn。
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local&timeout=%s", username, password, host, port, Dbname, timeout)
@@ -30,8 +35,8 @@ func init() {
 	if err != nil {
 		panic("连接数据库失败, error=" + err.Error())
 	}
+	_db.Logger = logger.Default.LogMode(logger.Info)
 	sqlDB, _ := _db.DB()
-
 	//设置数据库连接池参数
 	sqlDB.SetMaxOpenConns(100) //设置数据库连接池最大连接数
 	sqlDB.SetMaxIdleConns(20)  //连接池最大允许的空闲连接数，如果没有sql任务需要执行的连接数大于20，超过的连接会被连接池关闭

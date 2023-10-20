@@ -15,7 +15,7 @@ import (
 // ListSub 查询店铺的所有订阅
 func ListSub(shopName string, accessToken string) []string {
 	if accessToken == "" {
-		log.Fatalln("accessToken不能为空")
+		log.Println("accessToken不能为空")
 		return nil
 	}
 	shopData := common.GetShopDataMap(shopName)

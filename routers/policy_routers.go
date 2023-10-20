@@ -9,7 +9,9 @@ import (
 func PolicyRoutersInit(r *gin.Engine) {
 
 	g := r.Group("policy")
-	// 查询订阅信息
-	g.GET("genPolicy", controllers.SubscribeController{}.GetInfo)
-	g.GET("create", controllers.SubscribeController{}.Create)
+	{
+		// 查询订阅信息
+		g.GET("genPolicy", controllers.PolicyController{}.GenPolicy)
+	}
+
 }
