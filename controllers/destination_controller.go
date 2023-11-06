@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"amazon_stream/subfunc"
+	"amazon_stream/service/subfunc"
 
 	"github.com/gin-gonic/gin"
 )

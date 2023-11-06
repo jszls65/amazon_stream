@@ -2,13 +2,14 @@ package controllers
 
 import (
 	"amazon_stream/common"
-	"amazon_stream/subfunc"
+	"amazon_stream/service/subfunc"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 // 报表
