@@ -11,4 +11,5 @@ func InitRouters(r *gin.Engine) {
 	SubscribeRoutersInit(r)
 	DestinationsRouterInit(r)
 	ReportRouterInit(r)
+	SqsRouterInit(r)
 }

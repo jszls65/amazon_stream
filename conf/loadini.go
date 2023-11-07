@@ -7,7 +7,7 @@ import (
 	"gopkg.in/ini.v1"
 )
 
-func getCfg() *ini.File{
+func getCfg() *ini.File {
 	cfg, err := ini.Load("./conf/config.ini")
 	if err != nil {
 		fmt.Printf("Fail to read file: %v", err)
@@ -16,8 +16,12 @@ func getCfg() *ini.File{
 	return cfg
 }
 
-
-func GetMysqlConfig(key string) string{
+func GetMysqlConfig(key string) string {
 	cfg := getCfg()
 	return cfg.Section("mysql").Key(key).String()
+}
+
+func GetConfigByName(name string) *ini.Section {
+	cfg := getCfg()
+	return cfg.Section(name)
 }
