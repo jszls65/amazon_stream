@@ -12,7 +12,7 @@ import (
 )
 
 // 修复订单小时级别表的历史数据
-func main() {
+func main2() {
 	db := datasource.GetDB()
 	for {
 		hasData := updateCampaignId4Log(db, 100)

@@ -8,21 +8,21 @@ import (
 	"time"
 )
 
-func GetShopDataMap(shopName string) (shopData *model.AmzStreamSubscribe) {
+func GetShopDataMap(shopName string) (shopData *model.StreamSubscribe) {
 	db := datasource.GetDB()
-	var amzStreamSubscribe model.AmzStreamSubscribe
-	db.Raw("select * from t_amz_stream_subscribe where shop_name = ?", shopName).Scan(&amzStreamSubscribe)
-	return &amzStreamSubscribe
+	var StreamSubscribe model.StreamSubscribe
+	db.Raw("select * from t_amz_stream_subscribe where shop_name = ?", shopName).Scan(&StreamSubscribe)
+	return &StreamSubscribe
 }
 
 func SaveAccessToken(token string, id int64) {
 
 	db := datasource.GetDB()
-	amzStreamSubscribe := &model.AmzStreamSubscribe{
+	StreamSubscribe := &model.StreamSubscribe{
 		ID:              id,
 		AccessToken:     token,
 		AccessTokenTime: time.Now(),
 		AccessTokenTTL:  3600,
 	}
-	db.Model(&amzStreamSubscribe).Updates(amzStreamSubscribe)
+	db.Model(&StreamSubscribe).Updates(StreamSubscribe)
 }

@@ -25,7 +25,9 @@ func main() {
 
 	// Generate basic type-safe DAO API for struct `model.User` following conventions
 	//g.GenerateModelAs("t_amz_adv_operate_log", "AmzAdvOperateLog")
-	g.GenerateModelAs("t_ams_sp_traffic", "SpTraffic")
+	// g.GenerateModelAs("t_amz_adv_campaigns", "AdvCampaigns")
+	// g.GenerateModelAs("t_amz_adv_campaigns_sd", "AdvCampaignsSd")
+	g.GenerateModelAs("t_amz_adv_profile", "AdvProfile")
 
 	// Generate the code
 	// 单独执行命令: go run gormgen.go

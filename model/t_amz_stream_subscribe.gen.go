@@ -8,10 +8,10 @@ import (
 	"time"
 )
 
-const TableNameAmzStreamSubscribe = "t_amz_stream_subscribe"
+const TableNameStreamSubscribe = "t_amz_stream_subscribe"
 
-// AmzStreamSubscribe mapped from table <t_amz_stream_subscribe>
-type AmzStreamSubscribe struct {
+// StreamSubscribe mapped from table <t_amz_stream_subscribe>
+type StreamSubscribe struct {
 	ID              int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
 	ProfileID       int64     `gorm:"column:profile_id;comment:站点id" json:"profile_id"`                                          // 站点id
 	ShopName        string    `gorm:"column:shop_name;comment:店铺名称" json:"shop_name"`                                            // 店铺名称
@@ -35,7 +35,7 @@ type AmzStreamSubscribe struct {
 	UpdateTime      time.Time `gorm:"column:update_time;not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time"`     // 更新时间
 }
 
-// TableName AmzStreamSubscribe's table name
-func (*AmzStreamSubscribe) TableName() string {
-	return TableNameAmzStreamSubscribe
+// TableName StreamSubscribe's table name
+func (*StreamSubscribe) TableName() string {
+	return TableNameStreamSubscribe
 }

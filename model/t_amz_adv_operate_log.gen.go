@@ -8,13 +8,14 @@ import (
 	"time"
 )
 
-const TableNameAmzAdvOperateLog = "t_amz_adv_operate_log"
+const TableNameOperateLog = "t_amz_adv_operate_log"
 
-// AmzAdvOperateLog mapped from table <t_amz_adv_operate_log>
-type AmzAdvOperateLog struct {
+// OperateLog mapped from table <t_amz_adv_operate_log>
+type OperateLog struct {
 	ID           int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
 	Profileid    int64     `gorm:"column:profileid" json:"profileid"`
 	CampaignID   int64     `gorm:"column:campaignId" json:"campaignId"`
+	PortfolioID  int64     `gorm:"column:portfolio_id" json:"portfolio_id"`
 	AdGroupID    int64     `gorm:"column:adGroupId" json:"adGroupId"`
 	Opttime      time.Time `gorm:"column:opttime" json:"opttime"`
 	Operator     int64     `gorm:"column:operator" json:"operator"`
@@ -27,7 +28,7 @@ type AmzAdvOperateLog struct {
 	MatchType    string    `gorm:"column:match_type;comment:匹配类型" json:"match_type"` // 匹配类型
 }
 
-// TableName AmzAdvOperateLog's table name
-func (*AmzAdvOperateLog) TableName() string {
-	return TableNameAmzAdvOperateLog
+// TableName OperateLog's table name
+func (*OperateLog) TableName() string {
+	return TableNameOperateLog
 }
